@@ -1,2 +1,3 @@
-# Bao_cao_BT_B2306645
+#CT449 - Bao cáo đề tài xây dựng ứng dụng web quản lí
 B2306645 - Trần Hoàng Trung
+GVHD: Ths Nguyễn Minh Trung
