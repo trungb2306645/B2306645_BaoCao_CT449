@@ -1,44 +1,37 @@
+// Import Express để tạo server
 const express = require("express");
+
+// Import CORS để cho phép frontend Vue gọi API backend
 const cors = require("cors");
-//gọi dùng bộ quy tắc express gán = app ( express backend)
+// Import connectDB để kết nối đến cơ sở dữ liệu MongoDB
+const connectDB = require("./config/database");
+// Import các route của cầu thủ và đội bóng
+const playerRoutes = require("./routes/player.routes");
+const matchRoutes = require("./routes/match.routes");
+const PORT = 3000;
+
+// Tạo ứng dụng Express
 const app = express();
-//cài bộ quy tắc cors(người thông hành) cho app( express backend)
+
+// Kết nối đến cơ sở dữ liệu
+connectDB();
+
+// Cho phép frontend ở domain/port khác gọi đến backend
 app.use(cors());
-//cài này cho phép app( express backend) nhận dữ liệu dạng json
+
+// Cho phép Express đọc dữ liệu JSON mà client gửi lên
 app.use(express.json());
-//tạo mảng products chứa các sản phẩm theo ngôn ngữ lập trình javascript
-let products = [
-    { id: 1, name: "Laptop", price: 15000000 },
-    { id: 2, name: "Chuột", price: 300000 }
-];
 
-// Lấy danh sách sản phẩm
-app.get("/products", (req, res) => {
-    res.json(products);
+// Route kiểm tra server
+app.get("/", (req, res) => {
+    res.send("Football Management API is running");
 });
 
-// Thêm sản phẩm
-app.post("/products", (req, res) => {
-    const product = {
-        id: Date.now(),
-        name: req.body.name,
-        price: req.body.price
-    };
+// Sử dụng các route đã định nghĩa
+app.use("/api/players", playerRoutes);
+app.use("/api/matches", matchRoutes);
 
-    products.push(product);
-
-    res.json(product);
-});
-
-// Xóa sản phẩm
-app.delete("/products/:id", (req, res) => {
-    products = products.filter(
-        product => product.id != req.params.id
-    );
-
-    res.json({ message: "Đã xóa" });
-});
-
-app.listen(3000, () => {
-    console.log("Server chạy tại http://localhost:3000");
+// Khởi động server tại cổng PORT
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
