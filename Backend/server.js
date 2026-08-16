@@ -8,6 +8,7 @@ const connectDB = require("./config/database");
 // Import các route của cầu thủ và đội bóng
 const playerRoutes = require("./routes/player.routes");
 const matchRoutes = require("./routes/match.routes");
+const loginRoutes = require("./routes/login.routes");
 const PORT = 3000;
 
 // Tạo ứng dụng Express
@@ -30,7 +31,7 @@ app.get("/", (req, res) => {
 // Sử dụng các route đã định nghĩa
 app.use("/api/players", playerRoutes);
 app.use("/api/matches", matchRoutes);
-
+app.use("/api/login",loginRoutes);
 // Khởi động server tại cổng PORT
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
