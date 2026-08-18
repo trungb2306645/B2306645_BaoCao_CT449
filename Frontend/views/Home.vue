@@ -1,8 +1,8 @@
 <script setup>
 const features = [
     { icon: '👤', title: 'Quản lý cầu thủ', text: 'Thêm, chỉnh sửa và theo dõi hồ sơ cầu thủ.', to: '/players', action: 'Mở quản lý' },
-    { icon: '🏆', title: 'Quản lý đội bóng', text: 'Tổ chức đội hình và thành viên dễ dàng.', to: '/teams', action: 'Quản lý đội' },
-    { icon: '⚽', title: 'Quản lý trận đấu', text: 'Mô phỏng, theo dõi lịch và kết quả trận đấu.', to: '/matches', action: 'Mở trận đấu' },
+    { icon: '🎽', title: 'Quản lý đội bóng', text: 'Tổ chức đội hình và thành viên dễ dàng.', to: '/teams', action: 'Quản lý đội' },
+    { icon: '⚔️', title: 'Quản lý trận đấu', text: 'Mô phỏng, theo dõi lịch và kết quả trận đấu.', to: '/matches', action: 'Mở trận đấu' },
     { icon: '📊', title: 'Thống kê cầu thủ', text: 'Xem thành tích và bảng xếp hạng ghi bàn.', to: '/stats', action: 'Xem thống kê' },
 ];
 </script>
