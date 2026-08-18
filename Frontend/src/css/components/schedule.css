@@ -1,0 +1,2 @@
+.schedule-item { background: rgba(255,255,255,.04) !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; }
+.schedule-item + .schedule-item { margin-top: 8px; }

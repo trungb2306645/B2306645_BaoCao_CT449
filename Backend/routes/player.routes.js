@@ -2,6 +2,30 @@ const express = require("express");
 const router = express.Router();
 //load dữ liệu cầu thủ và đội bóng từ file data
 const players = require("../models/player.model");
+let uploadLib = null;
+let upload = null;
+const path = require('path');
+try {
+  uploadLib = require('multer');
+} catch (e) {
+  uploadLib = null;
+}
+
+if (uploadLib) {
+  const storage = uploadLib.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, '..', 'public', 'uploads'));
+    },
+    filename: function (req, file, cb) {
+      const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      const ext = path.extname(file.originalname) || '.jpg';
+      cb(null, `player-${unique}${ext}`);
+    }
+  });
+  upload = uploadLib({ storage });
+} else {
+  upload = null; // multer not available
+}
 
 //----------------------------------------------------------------------------------
 // API lấy danh sách tất cả cầu thủ.
@@ -10,6 +34,71 @@ router.get("/", async (req, res) => {
   const playersall = await players.find();
   res.status(200).json({message: "Lấy danh sách cầu thủ thành công", data: playersall});
 });
+//----------------------------------------------------------------------------------
+// API tìm kiếm cầu thủ theo tên.
+router.get("/search/:name", async (req, res) => {
+  const name = req.params.name;
+  //xem co name includes trong item.name khong, nếu có thì trả về item đó.
+  const result = await players.find({ name: { $regex: name, $options: "i" } });
+  if (!result) {
+    return res.status(404).json({
+      message: `Không tìm thấy cầu thủ có tên chứa "${name}"`,
+    });
+  }
+  res.status(200).json({
+    message: `Tìm thấy ${result.length} cầu thủ có tên chứa "${name}"`,
+    data: result});
+});
+//----------------------------------------------------------------------------------
+// API lấy thống kê một cầu thủ theo số áo
+router.get("/:number/stats", async (req, res) => {
+  const number = Number(req.params.number);
+  const player = await players.findOne({ number: number }).select("name number stats");
+  if (!player) return res.status(404).json({ message: "Không tìm thấy cầu thủ" });
+  res.status(200).json({ message: "Thống kê cầu thủ", data: player });
+});
+//----------------------------------------------------------------------------------
+// Upload player photo: multipart field name 'photo'
+// Note: place this BEFORE the route that matches '/:number'
+router.post('/:number/photo', (req, res, next) => {
+  if (!upload) {
+    return res.status(500).json({ message: "Server missing dependency 'multer'. Run 'npm install multer' in the Backend folder and restart the server." });
+  }
+  return upload.single('photo')(req, res, next);
+}, async (req, res) => {
+  const number = Number(req.params.number);
+  const player = await players.findOne({ number });
+  if (!player) return res.status(404).json({ message: 'Không tìm thấy cầu thủ' });
+  if (!req.file) return res.status(400).json({ message: 'Không có file được gửi' });
+  // Build public URL
+  const photoUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  player.photo = photoUrl;
+  await player.save();
+  res.status(200).json({ message: 'Upload ảnh thành công', data: player });
+});
+//----------------------------------------------------------------------------------
+// API lấy top scorers (use query param ?limit=10)
+router.get("/stats/top-scorers", async (req, res) => {
+  const limit = Number(req.query.limit) || 10;
+  const top = await players.find().sort({ 'stats.goals': -1 }).limit(limit).select("name number stats");
+  res.status(200).json({ message: `Top ${limit} ghi bàn`, data: top });
+});
+//----------------------------------------------------------------------------------
+//API sắp xếp cầu thủ theo vị trí.
+router.get("/sort/:position", async (req, res) => {
+  const position = req.params.position.toLowerCase();
+  const result = await players.find({ position: { $regex: position, $options: "i" } });
+  if (!result) {
+    return res.status(404).json({
+      message: `Không tìm thấy cầu thủ có vị trí "${position}"`,
+    });
+  }
+  res.status(200).json({
+    message: `Tìm thấy ${result.length} cầu thủ có vị trí "${position}"`,
+    data: result});
+});
+//----------------------------------------------------------------------------------
+
 //----------------------------------------------------------------------------------
 // API lấy thông tin một cầu thủ theo số áo.
 router.get("/:number", async (req, res) => {
@@ -130,33 +219,5 @@ router.delete("/:number", async (req, res) => {
     data: deletedPlayer
   });
 });
-//----------------------------------------------------------------------------------
-//API tìm kiếm cầu thủ theo tên.
-router.get("/search/:name", async (req, res) => {
-  const name = req.params.name;
-  //xem co name includes trong item.name khong, nếu có thì trả về item đó.
-  const result = await players.find({ name: { $regex: name, $options: "i" } });
-  if (!result) {
-    return res.status(404).json({
-      message: `Không tìm thấy cầu thủ có tên chứa "${name}"`,
-    });
-  }
-  res.status(200).json({
-    message: `Tìm thấy ${result.length} cầu thủ có tên chứa "${name}"`,
-    data: result});
-  });
-//API sắp xếp cầu thủ theo vị trí.
-router.get("/sort/:position", async (req, res) => {
-  const position = req.params.position.toLowerCase();
-  const result = await players.find({ position: { $regex: position, $options: "i" } });
-  if (!result) {
-    return res.status(404).json({
-      message: `Không tìm thấy cầu thủ có vị trí "${position}"`,
-    });
-  }
-  res.status(200).json({
-    message: `Tìm thấy ${result.length} cầu thủ có vị trí "${position}"`,
-    data: result});
-  });
 //----------------------------------------------------------------------------------
 module.exports = router;

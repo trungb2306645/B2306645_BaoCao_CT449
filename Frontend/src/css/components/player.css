@@ -1,0 +1,230 @@
+/* =========================================
+   PLAYER MANAGEMENT PAGE
+========================================= */
+
+.player-management-page {
+    min-height: 100vh;
+    background: #f4f7f5;
+}
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.football-navbar {
+    background: linear-gradient(135deg,
+            #064e3b,
+            #198754);
+
+    padding: 15px 0;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.football-navbar .navbar-brand {
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.player-hero {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 70px 0 90px;
+
+    background:
+        linear-gradient(135deg,
+            #064e3b,
+            #087443,
+            #198754);
+}
+
+
+/* Họa tiết tròn phía sau */
+
+.player-hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 450px;
+    height: 450px;
+
+    border: 80px solid rgba(255, 255, 255, 0.04);
+
+    border-radius: 50%;
+
+    right: -150px;
+    top: -200px;
+}
+
+
+.player-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 250px;
+
+    border: 45px solid rgba(255, 255, 255, 0.04);
+
+    border-radius: 50%;
+
+    left: -120px;
+    bottom: -160px;
+}
+
+
+/* Đưa nội dung lên trên background */
+
+.player-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================
+   BÓNG ĐÁ
+========================================= */
+
+.football-big-icon {
+    font-size: 150px;
+
+    filter:
+        drop-shadow(0 15px 20px rgba(0, 0, 0, 0.25));
+
+    animation:
+        footballFloat 3s ease-in-out infinite;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.player-content {
+    position: relative;
+
+    margin-top: -40px;
+
+    z-index: 5;
+
+    padding-bottom: 60px;
+}
+
+
+.management-content {
+background: transparent;
+    padding: 10px 0 40px;
+    box-shadow: none;
+}
+
+.player-management-content {
+    width: 100%;
+    color: white;
+}
+
+/* =========================================
+   TRẠNG THÁI ĐỘI BÓNG
+========================================= */
+
+.team-status {
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 16px;
+
+    border-radius: 30px;
+
+    background: #e9f8f0;
+
+    color: #198754;
+
+    font-weight: 600;
+
+    font-size: 14px;
+}
+
+
+.team-status span {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #20c997;
+
+    box-shadow:
+        0 0 8px #20c997;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.football-footer {
+    background: #052c1a;
+
+    color: rgba(255, 255, 255, 0.6);
+
+    padding: 25px;
+}
+
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+@keyframes footballFloat {
+
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(8deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .player-hero {
+        padding: 45px 0 70px;
+    }
+
+    .player-hero h1 {
+        font-size: 45px;
+    }
+
+    .football-big-icon {
+        font-size: 90px;
+
+        margin-top: 25px;
+    }
+
+    .management-content {
+        padding: 15px;
+    }
+
+}

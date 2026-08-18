@@ -9,6 +9,10 @@ const connectDB = require("./config/database");
 const playerRoutes = require("./routes/player.routes");
 const matchRoutes = require("./routes/match.routes");
 const loginRoutes = require("./routes/login.routes");
+const teamRoutes = require("./routes/team.routes");
+const simulateRoutes = require("./routes/simulate.routes");
+const standingsRoutes = require("./routes/standings.routes");
+const simulationFetchRoutes = require("./routes/simulations.fetch.routes");
 const PORT = 3000;
 
 // Tạo ứng dụng Express
@@ -23,6 +27,10 @@ app.use(cors());
 // Cho phép Express đọc dữ liệu JSON mà client gửi lên
 app.use(express.json());
 
+// Serve uploaded/static files from public/uploads
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 // Route kiểm tra server
 app.get("/", (req, res) => {
     res.send("Football Management API is running");
@@ -32,6 +40,10 @@ app.get("/", (req, res) => {
 app.use("/api/players", playerRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/login",loginRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/simulate", simulateRoutes);
+app.use("/api/standings", standingsRoutes);
+app.use("/api/simulations", simulationFetchRoutes);
 // Khởi động server tại cổng PORT
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);

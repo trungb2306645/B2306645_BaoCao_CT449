@@ -1,13 +1,13 @@
-//thêm chức năng tạo app
 import { createApp } from "vue";
-//khởi động app trang hiển thị ban đầu
 import App from "../views/App.vue";
-//thêm router
 import router from "./router/index.js";
-//import bootstrap dùng cho app.vue
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-//tạo app
+import "./css/components/background.css";
+import "./css/components/style.css";
+import "./css/components/player.css";
+import "./css/components/player-card.css";
+
 createApp(App)
   .use(router)
   .mount("#app");

@@ -1,0 +1,20 @@
+.team-board-header { gap: 16px; }
+.team-create-form, .team-edit-form, .member-toolbar { display: flex; gap: 10px; align-items: center; }
+.team-name-input { display: inline-block; width: 220px; }
+.team-list { gap: 8px; }
+.team-list-item { cursor: pointer; transition: background-color 160ms ease, transform 160ms ease; }
+.team-list-item:hover, .team-list-item.team-selected { background: rgba(255,209,102,.14) !important; transform: translateX(3px); }
+.team-details { min-height: 180px; padding: 20px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; }
+.team-details-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.team-label { display: block; margin-bottom: 4px; color: var(--accent); font-size: .7rem; font-weight: 700; letter-spacing: .12em; }
+.team-edit-form { margin-bottom: 18px; }
+.member-toolbar { margin-bottom: 18px; }
+.member-toolbar .form-select { flex: 1; }
+.member-list { display: grid; gap: 8px; }
+.member-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: rgba(0,0,0,.18); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; }
+.member-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.team-empty-state { padding: 24px; color: rgba(255,255,255,.65); text-align: center; background: rgba(255,255,255,.04); border-radius: 10px; }
+.team-modal-backdrop { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(3,20,13,.78); backdrop-filter: blur(5px); }
+.team-modal { width: min(100%, 460px); padding: 28px; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+@media (max-width: 640px) { .team-board-header { align-items: stretch !important; flex-direction: column; } .team-name-input { width: 100%; } }
+@media (max-width: 576px) { .team-create-form, .team-edit-form, .member-toolbar { align-items: stretch; flex-direction: column; } .team-create-form > *, .team-edit-form > *, .member-toolbar > * { width: 100%; } .member-row { align-items: flex-start; flex-direction: column; } }
