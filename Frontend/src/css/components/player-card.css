@@ -1,22 +1,94 @@
+/* ÁP DỤNG CHO CARD ĐƯỢC CHỌN TRONG PLAYERMANAGEMENT.VUE */
+
 .player-card {
   position: relative;
-  min-height: 140px;
-  padding: 18px;
+  height: 360px;
+  min-height: 360px;
   overflow: hidden;
   color: #fff;
   background-color: var(--green-700);
   background: var(--green-700);
   border-radius: 12px;
   cursor: pointer;
+  display: flex;
+  align-items: flex-end;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 .player-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,.25); }
-.player-card .card-overlay { position: absolute; inset: 0; background: linear-gradient(135deg,rgba(0,0,0,.18),rgba(0,0,0,.6)); pointer-events: none; }
-.player-card .player-image { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.player-card > :not(.card-overlay) { position: relative; z-index: 1; }
-.player-card .player-number { position: absolute; top: 12px; left: 12px; font-size: 28px; font-weight: 700; }
-.player-card .player-icon { position: absolute; top: 12px; right: 12px; font-size: 28px; }
-.player-card .player-name { margin-top: 48px; font-weight: 700; }
-.player-card .player-position { opacity: .9; }
-.player-card .player-age { display: inline-block; margin-top: 8px; padding: 6px 10px; background: rgba(255,255,255,.12); border-radius: 20px; }
-@media (max-width: 576px) { .player-card { min-height: 120px; padding: 12px; } .player-card .player-number { font-size: 22px; } .player-card .player-name { font-size: 1rem; } }
+.player-card .card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.72) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.player-card .player-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.player-card{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.player-card {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.player-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 14px 12px 12px;
+}
+.player-card .player-number {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 28px;
+  font-weight: 700;
+  z-index: 2;
+}
+.player-card .player-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 28px;
+  z-index: 2;
+}
+.player-card .player-name {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.player-card .player-position { opacity: .9; margin: 0; }
+.player-card .player-age {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.12);
+  border-radius: 20px;
+  width: fit-content;
+}
+
+/* giống kiểu if (điều kiện bên trong đúng) thì áp dụng cái phía trong */
+@media (max-width: 576px) { 
+  .player-card { height: 300px; min-height: 300px; } 
+  .player-card .player-number { font-size: 22px; } 
+  .player-card .player-name { font-size: 1rem; } 
+  .player-card { padding: 14px 12px 12px; } 
+}

@@ -19,8 +19,11 @@ const playerSchema = new mongoose.Schema({
     number: {
         type: Number,
         required: true
-    }
-    ,
+    },
+    photo: {
+        type: String,
+        default: ''
+    },
     stats: {
         goals: { type: Number, default: 0 },
         assists: { type: Number, default: 0 },

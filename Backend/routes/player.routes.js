@@ -1,31 +1,22 @@
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 //load dữ liệu cầu thủ và đội bóng từ file data
 const players = require("../models/player.model");
-let uploadLib = null;
-let upload = null;
-const path = require('path');
-try {
-  uploadLib = require('multer');
-} catch (e) {
-  uploadLib = null;
-}
 
-if (uploadLib) {
-  const storage = uploadLib.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '..', 'public', 'uploads'));
-    },
-    filename: function (req, file, cb) {
-      const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      const ext = path.extname(file.originalname) || '.jpg';
-      cb(null, `player-${unique}${ext}`);
-    }
-  });
-  upload = uploadLib({ storage });
-} else {
-  upload = null; // multer not available
-}
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, '..', 'public', 'uploads'));
+  },
+  filename: function (req, file, cb) {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname) || '.jpg';
+    cb(null, `player-${unique}${ext}`);
+  }
+});
+
+const upload = multer({ storage });
 
 //----------------------------------------------------------------------------------
 // API lấy danh sách tất cả cầu thủ.
@@ -112,42 +103,43 @@ router.get("/:number", async (req, res) => {
   res.status(200).json(player);
 });
 //----------------------------------------------------------------------------------
-// API thêm một cầu thủ mới.
-router.post("/",async (req, res) => {
-  // req.body chứa dữ liệu JSON mà client gửi lên.
-  const { name, age, position, number} = req.body;
-  // Kiểm tra các trường bắt buộc. //undefined la chua gan gia trị
+// API thêm một cầu thủ mới, có thể kèm ảnh upload.
+router.post("/", (req, res, next) => {
+  if (!upload) {
+    return res.status(500).json({ message: "Server missing dependency 'multer'. Run 'npm install multer' in the Backend folder and restart the server." });
+  }
+  return upload.single('photo')(req, res, next);
+}, async (req, res) => {
+  const { name, age, position, number } = req.body;
+
   if (!name || !age || !position || number === undefined) {
     return res.status(400).json({
       message: "Vui lòng nhập đầy đủ thông tin cầu thủ",
     });
   }
-  //nếu cầu thủ trùng số áo thì không cho thêm
-  if (await players.findOne({ number: Number(number) })) {
-      return res.status(400).json({
-      message: "Số áo đã tồn tại",
-    });
-  }
-     // Tìm cầu thủ có số áo cũ
-    const player = await players.findOne({
-        number: Number(number)
-    });
-  if (player) {
-    return res.status(400).json({ message: "Số áo đã tồn tại" });
-  }
-const newPlayer = new players({
-    name: name,
-    age: Number(age),
-    position: position,
-    number: Number(number)
-});
 
-await newPlayer.save();
-    // Trả về dữ liệu cầu thủ vừa thêm.
-    res.status(201).json({
-        message: "Thêm cầu thủ thành công",
-        data: newPlayer,
-    }); 
+  // if (await players.findOne({ number: Number(number) })) {
+  //   return res.status(400).json({ message: "Số áo đã tồn tại" });
+  // }
+
+  const photoUrl = req.file
+    ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+    : '';
+
+  const newPlayer = new players({
+    name,
+    age: Number(age),
+    position,
+    number: Number(number),
+    photo: photoUrl,
+  });
+
+  await newPlayer.save();
+
+  return res.status(201).json({
+    message: "Thêm cầu thủ thành công",
+    data: newPlayer,
+  });
 });
 //----------------------------------------------------------------------------------
 // API cập nhật thông tin cầu thủ.

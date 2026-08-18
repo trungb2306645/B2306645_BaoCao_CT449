@@ -1,10 +1,29 @@
 .player-management-content { color: #fff; }
+/* phần tử con kế tiếp áp dụng cho css bên trong */
 .player-management-content > .text-center:first-child { padding: 24px 0 8px; }
+/* important ghi đè các css khác có độ ưu tiên cao nhất */
 .player-management-content > .text-center:first-child p { color: rgba(255,255,255,.7) !important; }
 .player-focus, .modal-backdrop-custom { position: fixed; inset: 0; z-index: 1050; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(3,20,13,.78); backdrop-filter: blur(5px); }
 .custom-modal { width: min(100%,460px); padding: 28px; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-.selected-card { width: min(100%,540px); min-height: 220px; margin: 36px auto; cursor: default; border: 2px solid var(--accent); animation: card-appear 220ms ease; }
+.selected-card { width: min(100%,540px); min-height: 420px; height: auto; margin: 36px auto; cursor: default; border: 2px solid var(--accent); animation: card-appear 220ms ease; padding-bottom: 18px; }
 .selected-card:hover { transform: none; }
+.selected-card .player-info { position: relative; bottom: auto; left: auto; width: 100%; padding: 14px 12px 0; z-index: 2; }
+.selected-card .player-actions { position: relative; z-index: 2; margin-top: 12px; padding-bottom: 6px; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(8px); transition: all 180ms ease; }
+.selected-card:hover .player-actions, .selected-card.is-active .player-actions { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
 .close-button { position: absolute; top: 12px; right: 12px; z-index: 2; width: 36px; height: 36px; color: #fff; font-size: 24px; line-height: 1; background: rgba(0,0,0,.35); border: 0; border-radius: 50%; }
 .close-button:hover { background: #dc3545; }
-@keyframes card-appear { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+
+/* 1 animation app dụng cho class nào vd dùng " .play-card{animation: card-appear <time> ease}" */
+@keyframes card-appear { 
+    from 
+    {   
+        opacity: 0; 
+        transform: scale(.96); 
+    } 
+    to 
+    { 
+        opacity: 1; 
+        transform: 
+        scale(1); 
+    }
+ }

@@ -9,14 +9,25 @@ const {
     showPlayers,
     AddForm,
     DeleteFrom,
+    EditForm,
     newPlayer,
+    editPlayer,
+    playerPhotoFile,
+    playerPhotoPreview,
+    editPhotoPreview,
     inputNumber,
     getPlayers,
     selectPlayer,
     closePlayer,
     addPlayer,
+    saveEditPlayer,
     deletePlayer,
-    getImg
+    getImg,
+    handlePlayerPhotoChange,
+    handleEditPhotoChange,
+    openEditPlayer,
+    closeEditPlayer,
+    resetNewPlayerForm
 } = usePlayers();
 </script>
 
@@ -84,16 +95,18 @@ const {
                         </div>
 
                         <!-- Thông tin -->
-                        <h4 class="player-name">
-                            {{ player.name }}
-                        </h4>
+                        <div class="player-info">
+                            <h4 class="player-name">
+                                {{ player.name }}
+                            </h4>
 
-                        <p class="player-position">
-                            {{ player.position }}
-                        </p>
+                            <p class="player-position">
+                                {{ player.position }}
+                            </p>
 
-                        <div class="player-age">
-                            {{ player.age }} tuổi
+                            <div class="player-age">
+                                {{ player.age }} tuổi
+                            </div>
                         </div>
 
                     </div>
@@ -116,17 +129,26 @@ const {
                     Thêm cầu thủ
                 </h2>
 
-                <input v-model="newPlayer.name" class="form-control mb-3" placeholder="Tên cầu thủ" />
+                <input v-model="newPlayer.name" class="border boder-secondary text-dark form-control mb-3" placeholder="Tên cầu thủ" />
 
-                <input v-model="newPlayer.age" class="form-control mb-3" type="number" placeholder="Tuổi" />
+                <input v-model="newPlayer.age" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Tuổi" />
 
-                <input v-model="newPlayer.position" class="form-control mb-3" placeholder="Vị trí" />
+                <input v-model="newPlayer.position" class="border boder-secondary text-dark form-control mb-3" placeholder="Vị trí" />
 
-                <input v-model="newPlayer.number" class="form-control mb-3" type="number" placeholder="Số áo" />
+                <input v-model="newPlayer.number" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Số áo" />
+
+                <div class="mb-3">
+                    <label class=" text-dark form-label fw-semibold">Ảnh cầu thủ</label>
+                    <input type="file" accept="image/*" class="border boder-secondary text-dark form-control" @change="handlePlayerPhotoChange" />
+                    <div v-if="playerPhotoPreview" class="mt-3 text-center">
+                        <img :src="playerPhotoPreview" alt="preview ảnh cầu thủ" class="img-fluid rounded"
+                            style="max-height: 140px; object-fit: cover;" />
+                    </div>
+                </div>
 
                 <div class="text-end">
 
-                    <button class="btn btn-secondary me-2" @click="AddForm = false">
+                    <button class="btn btn-secondary me-2" @click="AddForm = false; resetNewPlayerForm()">
                         Hủy
                     </button>
 
@@ -152,7 +174,7 @@ const {
                     Xóa cầu thủ
                 </h2>
 
-                <input v-model="inputNumber" class="form-control mb-4" type="number" placeholder="Nhập số áo" />
+                <input v-model="inputNumber" class="border boder-secondary text-dark form-control mb-4" type="number" placeholder="Nhập số áo" />
 
                 <div class="text-end">
 
@@ -175,13 +197,9 @@ const {
 
         <div v-if="selectedPlayer" class="player-focus" @click.self="closePlayer">
 
-            <div class="player-card selected-card">
+            <div class="player-card selected-card is-active" :class="{ 'is-active': selectedPlayer }">
                 <img class="player-image" :src="getImg(selectedPlayer)" alt="" aria-hidden="true" />
                 <div class="card-overlay"></div>
-
-                <button class="close-button" @click="closePlayer">
-                    ×
-                </button>
 
                 <div class="player-number">
                     {{ selectedPlayer.number }}
@@ -191,22 +209,64 @@ const {
                     <i class="bi bi-person-fill"></i>
                 </div>
 
-                <h2 class="player-name">
-                    {{ selectedPlayer.name }}
-                </h2>
+                <div>
+                    <h2 class="player-name">
+                        {{ selectedPlayer.name }}
+                    </h2>
 
-                <p class="player-position">
-                    {{ selectedPlayer.position }}
-                </p>
+                    <p class="player-position">
+                        {{ selectedPlayer.position }}
+                    </p>
 
-                <div class="player-age">
-                    {{ selectedPlayer.age }} tuổi
+                    <div class="player-age">
+                        {{ selectedPlayer.age }} tuổi
+                    </div>
+                </div>
+
+                <div class="player-actions text-start mt-3 position-absolute bottom-0 start-0 p-2 ">
+                    <button class="btn border border-warning me-2 text-warning" @click.stop="openEditPlayer(selectedPlayer)">
+                        Sửa
+                    </button>
+                    <button class="btn border-secondary text-secondary" @click="closePlayer">
+                        Đóng
+                    </button>
                 </div>
 
             </div>
 
         </div>
+        <!-- FROM SỬA -->
+        <div v-if="EditForm && editPlayer" class="modal-backdrop-custom">
+            <div class="custom-modal">
+                <h2 class="text-warning mb-4">
+                    <i class="bi bi-pencil-square"></i>
+                    Chỉnh sửa cầu thủ
+                </h2>
+
+                <input v-model="editPlayer.name" class="border boder-secondary text-dark form-control mb-3" placeholder="Tên cầu thủ" />
+                <input v-model="editPlayer.age" class="border boder-secondary text-dark  form-control mb-3" type="number" placeholder="Tuổi" />
+                <input v-model="editPlayer.position" class="border boder-secondary text-dark form-control mb-3" placeholder="Vị trí" />
+                <input v-model="editPlayer.number" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Số áo" />
+
+                <div class="mb-3">
+                    <label class=" text-dark form-label fw-semibold">Ảnh mới</label>
+                    <input type="file" accept="image/*" class="border boder-secondary text-dark  form-control" @change="handleEditPhotoChange" />
+                    <div v-if="editPhotoPreview" class="mt-3 text-center">
+                        <img :src="editPhotoPreview" alt="preview ảnh cầu thủ" class="img-fluid rounded"
+                            style="max-height: 140px; object-fit: cover;" />
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button class="btn btn-secondary me-2" @click="closeEditPlayer">
+                        Hủy
+                    </button>
+                    <button class="btn btn-warning" @click="saveEditPlayer">
+                        Lưu thay đổi
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </div>
 </template>
-
