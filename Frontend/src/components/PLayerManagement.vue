@@ -6,6 +6,7 @@ import usePlayers from '../composables/usePlayers';
 const {
     players,
     selectedPlayer,
+    deleteTarget,
     showPlayers,
     AddForm,
     DeleteFrom,
@@ -59,7 +60,7 @@ const {
                 Thêm cầu thủ
             </button>
 
-            <button class="btn btn-danger m-2" @click="DeleteFrom = true">
+            <button class="btn btn-danger m-2" @click="deleteTarget = null; DeleteFrom = true">
                 <i class="bi bi-person-dash-fill"></i>
                 Xóa cầu thủ
             </button>
@@ -129,17 +130,22 @@ const {
                     Thêm cầu thủ
                 </h2>
 
-                <input v-model="newPlayer.name" class="border boder-secondary text-dark form-control mb-3" placeholder="Tên cầu thủ" />
+                <input v-model="newPlayer.name" class="border boder-secondary text-dark form-control mb-3"
+                    placeholder="Tên cầu thủ" />
 
-                <input v-model="newPlayer.age" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Tuổi" />
+                <input v-model="newPlayer.age" class="border boder-secondary text-dark form-control mb-3" type="number"
+                    placeholder="Tuổi" />
 
-                <input v-model="newPlayer.position" class="border boder-secondary text-dark form-control mb-3" placeholder="Vị trí" />
+                <input v-model="newPlayer.position" class="border boder-secondary text-dark form-control mb-3"
+                    placeholder="Vị trí" />
 
-                <input v-model="newPlayer.number" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Số áo" />
+                <input v-model="newPlayer.number" class="border boder-secondary text-dark form-control mb-3"
+                    type="number" placeholder="Số áo" />
 
                 <div class="mb-3">
                     <label class=" text-dark form-label fw-semibold">Ảnh cầu thủ</label>
-                    <input type="file" accept="image/*" class="border boder-secondary text-dark form-control" @change="handlePlayerPhotoChange" />
+                    <input type="file" accept="image/*" class="border boder-secondary text-dark form-control"
+                        @change="handlePlayerPhotoChange" />
                     <div v-if="playerPhotoPreview" class="mt-3 text-center">
                         <img :src="playerPhotoPreview" alt="preview ảnh cầu thủ" class="img-fluid rounded"
                             style="max-height: 140px; object-fit: cover;" />
@@ -174,16 +180,34 @@ const {
                     Xóa cầu thủ
                 </h2>
 
-                <input v-model="inputNumber" class="border boder-secondary text-dark form-control mb-4" type="number" placeholder="Nhập số áo" />
+                <div class="mb-3">
+                    <div class="fw-semibold text-dark mb-2">Chọn cầu thủ cần xóa:</div>
+                    <div class="row g-2">
+                        <div v-for="player in players" :key="player._id" class="col-12 col-sm-6">
+                            <div class="border rounded p-2 text-dark bg-light cursor-pointer"
+                                :class="{ 'border-danger bg-danger-subtle': deleteTarget && String(deleteTarget._id) === String(player._id) }"
+                                @click="deleteTarget = player" style="cursor: pointer;">
+                                <div class="fw-bold">{{ player.name }}</div>
+                                <div class="small">Số áo: {{ player.number }} · {{ player.position }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="deleteTarget" class="border border-danger rounded p-3 mb-4 bg-light text-dark">
+                    <div class="fw-bold mb-1">Đã chọn để xóa:</div>
+                    <div>{{ deleteTarget.name }} - Số áo {{ deleteTarget.number }}</div>
+                    <div class="text-muted small">{{ deleteTarget.position }}</div>
+                </div>
 
                 <div class="text-end">
 
-                    <button class="btn btn-secondary me-2" @click="DeleteFrom = false">
+                    <button class="btn btn-secondary me-2" @click="deleteTarget = null; DeleteFrom = false">
                         Hủy
                     </button>
 
-                    <button class="btn btn-danger" @click="deletePlayer">
-                        Xóa
+                    <button class="btn btn-danger" :disabled="!deleteTarget" @click="deletePlayer">
+                        Xóa cầu thủ đã chọn
                     </button>
 
                 </div>
@@ -224,7 +248,8 @@ const {
                 </div>
 
                 <div class="player-actions text-start mt-3 position-absolute bottom-0 start-0 p-2 ">
-                    <button class="btn border border-warning me-2 text-warning" @click.stop="openEditPlayer(selectedPlayer)">
+                    <button class="btn border border-warning me-2 text-warning"
+                        @click.stop="openEditPlayer(selectedPlayer)">
                         Sửa
                     </button>
                     <button class="btn border-secondary text-secondary" @click="closePlayer">
@@ -243,14 +268,19 @@ const {
                     Chỉnh sửa cầu thủ
                 </h2>
 
-                <input v-model="editPlayer.name" class="border boder-secondary text-dark form-control mb-3" placeholder="Tên cầu thủ" />
-                <input v-model="editPlayer.age" class="border boder-secondary text-dark  form-control mb-3" type="number" placeholder="Tuổi" />
-                <input v-model="editPlayer.position" class="border boder-secondary text-dark form-control mb-3" placeholder="Vị trí" />
-                <input v-model="editPlayer.number" class="border boder-secondary text-dark form-control mb-3" type="number" placeholder="Số áo" />
+                <input v-model="editPlayer.name" class="border boder-secondary text-dark form-control mb-3"
+                    placeholder="Tên cầu thủ" />
+                <input v-model="editPlayer.age" class="border boder-secondary text-dark  form-control mb-3"
+                    type="number" placeholder="Tuổi" />
+                <input v-model="editPlayer.position" class="border boder-secondary text-dark form-control mb-3"
+                    placeholder="Vị trí" />
+                <input v-model="editPlayer.number" class="border boder-secondary text-dark form-control mb-3"
+                    type="number" placeholder="Số áo" />
 
                 <div class="mb-3">
                     <label class=" text-dark form-label fw-semibold">Ảnh mới</label>
-                    <input type="file" accept="image/*" class="border boder-secondary text-dark  form-control" @change="handleEditPhotoChange" />
+                    <input type="file" accept="image/*" class="border boder-secondary text-dark  form-control"
+                        @change="handleEditPhotoChange" />
                     <div v-if="editPhotoPreview" class="mt-3 text-center">
                         <img :src="editPhotoPreview" alt="preview ảnh cầu thủ" class="img-fluid rounded"
                             style="max-height: 140px; object-fit: cover;" />

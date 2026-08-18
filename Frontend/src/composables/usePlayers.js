@@ -4,6 +4,7 @@ import defaultAvatar from '../assets/player-default.svg';
 
 const players = ref([]);
 const selectedPlayer = ref(null);
+const deleteTarget = ref(null);
 const showPlayers = ref(false);
 const AddForm = ref(false);
 const DeleteFrom = ref(false);
@@ -96,6 +97,7 @@ const openEditPlayer = (player) => {
 
   editPlayer.value = {
     ...player,
+    originalPlayerId: player?._id || null,
     originalNumber: Number(player.number),
     age: Number(player.age),
     number: Number(player.number)
@@ -160,6 +162,7 @@ const saveEditPlayer = async () => {
     };
 
     const originalNumber = Number(payload.originalNumber ?? payload.number);
+    const originalPlayerId = payload.originalPlayerId || null;
 
     if (!payload.name || !payload.position || Number.isNaN(payload.age) || Number.isNaN(payload.number)) {
       alert('Vui lòng nhập đầy đủ thông tin cầu thủ');
@@ -167,6 +170,7 @@ const saveEditPlayer = async () => {
     }
 
     const res = await api.put(`/api/players/${originalNumber}`, {
+      playerId: originalPlayerId,
       name: payload.name,
       age: payload.age,
       position: payload.position,
@@ -182,14 +186,19 @@ const saveEditPlayer = async () => {
       }
     }
 
-    players.value = players.value.map(player => {
-      if (Number(player.number) === originalNumber) {
-        return updatedPlayer;
-      }
-      return player;
+    players.value = players.value.map((player) => {
+      const samePlayer = originalPlayerId
+        ? String(player._id) === String(originalPlayerId)
+        : Number(player.number) === originalNumber;
+
+      return samePlayer ? updatedPlayer : player;
     });
 
-    if (selectedPlayer.value && Number(selectedPlayer.value.number) === originalNumber) {
+    if (selectedPlayer.value && originalPlayerId) {
+      if (String(selectedPlayer.value._id) === String(originalPlayerId)) {
+        selectedPlayer.value = updatedPlayer;
+      }
+    } else if (selectedPlayer.value && Number(selectedPlayer.value.number) === originalNumber) {
       selectedPlayer.value = updatedPlayer;
     }
 
@@ -202,8 +211,23 @@ const saveEditPlayer = async () => {
 
 const deletePlayer = async () => {
   try {
-    const res = await api.delete(`/api/players/${inputNumber.value}`);
-    players.value = players.value.filter(p => p.number !== Number(inputNumber.value));
+    const target = deleteTarget.value || selectedPlayer.value;
+    const targetId = target?._id || null;
+
+    if (!targetId) {
+      alert('Vui lòng chọn cầu thủ để xóa');
+      return false;
+    }
+
+    const res = await api.delete(`/api/players/${targetId}`);
+
+    players.value = players.value.filter(p => String(p._id) !== String(targetId));
+
+    if (selectedPlayer.value && String(selectedPlayer.value._id) === String(targetId)) {
+      selectedPlayer.value = null;
+    }
+
+    deleteTarget.value = null;
     inputNumber.value = '';
     DeleteFrom.value = false;
     return true;
@@ -220,6 +244,7 @@ export default function usePlayers() {
   return {
     players,
     selectedPlayer,
+    deleteTarget,
     showPlayers,
     AddForm,
     DeleteFrom,

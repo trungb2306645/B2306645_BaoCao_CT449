@@ -118,9 +118,7 @@ router.post("/", (req, res, next) => {
     });
   }
 
-  // if (await players.findOne({ number: Number(number) })) {
-  //   return res.status(400).json({ message: "Số áo đã tồn tại" });
-  // }
+  const parsedNumber = Number(number);
 
   const photoUrl = req.file
     ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
@@ -130,7 +128,7 @@ router.post("/", (req, res, next) => {
     name,
     age: Number(age),
     position,
-    number: Number(number),
+    number: parsedNumber,
     photo: photoUrl,
   });
 
@@ -144,23 +142,23 @@ router.post("/", (req, res, next) => {
 //----------------------------------------------------------------------------------
 // API cập nhật thông tin cầu thủ.
 router.put("/:number", async (req, res) => {
-    // Lấy số áo cũ từ URL
     const oldNumber = Number(req.params.number);
+    const { playerId, name, age, position, number: newNumber } = req.body;
 
-    // Lấy thông tin mới từ body
-    const { name, age, position, number: newNumber } = req.body;
-
-    // Kiểm tra dữ liệu
     if (!name || !age || !position || newNumber === undefined) {
         return res.status(400).json({
             message: "Nhập đầy đủ thông tin cầu thủ"
         });
     }
 
-    // Tìm cầu thủ có số áo cũ
-    const player = await players.findOne({
-        number: oldNumber
-    });
+    let player = null;
+    if (playerId) {
+        player = await players.findById(playerId);
+    }
+
+    if (!player) {
+        player = await players.findOne({ number: oldNumber });
+    }
 
     if (!player) {
         return res.status(404).json({
@@ -168,18 +166,17 @@ router.put("/:number", async (req, res) => {
         });
     }
 
-    // Cập nhật thông tin
+    const targetNumber = Number(newNumber);
+
     Object.assign(player, {
         name,
         age: Number(age),
         position,
-        number: Number(newNumber)
+        number: targetNumber
     });
 
-    // Lưu vào MongoDB
     await player.save();
 
-    // Trả kết quả
     res.status(200).json({
         message: "Cập nhật cầu thủ thành công",
         data: player
@@ -187,25 +184,30 @@ router.put("/:number", async (req, res) => {
 });
 //----------------------------------------------------------------------------------
 // API xóa cầu thủ.
-router.delete("/:number", async (req, res) => {
-  // Lấy số áo cần xóa từ URL.
-  const inputNumber = Number(req.params.number);
- 
-  // tim kiếm cầu thủ có số áo cần xóa
-  const player = await players.findOne({
-    number: inputNumber
-  });
-  // Nếu không tìm thấy cầu thủ, trả về lỗi 404.
+router.delete("/:id", async (req, res) => {
+  const target = req.params.id;
+  let player = null;
+
+  if (/^[0-9a-fA-F]{24}$/.test(target)) {
+    player = await players.findById(target);
+  }
+
+  if (!player) {
+    const isNumeric = /^-?\d+(\.\d+)?$/.test(String(target));
+    if (isNumeric) {
+      const numericTarget = Number(target);
+      player = await players.findOne({ number: numericTarget });
+    }
+  }
+
   if (!player) {
     return res.status(404).json({
       message: "Không tìm thấy cầu thủ",
     });
   }
-    // Xóa cầu thủ khỏi danh sách.
-   const deletedPlayer = await players.deleteOne({
-        number: inputNumber
-    });
-  // Thông báo xóa thành công.
+
+  const deletedPlayer = await players.deleteOne({ _id: player._id });
+
   res.status(200).json({
     message: "Xóa cầu thủ thành công",
     data: deletedPlayer
