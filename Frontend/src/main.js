@@ -7,7 +7,7 @@ import "./css/components/background.css";
 import "./css/components/style.css";
 import "./css/components/player.css";
 import "./css/components/player-card.css";
-
+import "./css/components/login-management.css";
 createApp(App)
   .use(router)
   .mount("#app");

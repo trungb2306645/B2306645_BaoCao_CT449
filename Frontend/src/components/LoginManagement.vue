@@ -32,13 +32,13 @@ const loginplayer = async () => {
 <template>
 
     <!-- Toàn bộ màn hình -->
-    <div class="bg-success-subtle d-flex justify-content-center ">
+    <div class=" d-flex justify-content-center login-bg">
 
         <!-- Khung đăng nhập /đổ bóng/viền/kịch thước -->
-        <div class="card shadow-lg border-1 login-card">
+        <div class="card shadow-lg border-1 w-100">
 
             <!-- Phần tiêu đề /căn chỉnh card, phông xanh, chữ trắng, chữ ở giữa,lớp đệm trục y -->
-            <div class="card-header bg-success text-white text-center py-2">
+            <div class="card-header bg-success text-white text-center">
 
                 <h2 class="fw-bold mb-1 mt-2">
                     FOOTBALL CLUB ⚽
