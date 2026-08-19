@@ -97,7 +97,7 @@ const {
 
                         <!-- Thông tin -->
                         <div class="player-info">
-                            <h4 class="player-name">
+                            <h4 class="player-name name-animate">
                                 {{ player.name }}
                             </h4>
 
@@ -220,7 +220,7 @@ const {
         <!-- ================= CARD ĐƯỢC CHỌN ================= -->
 
         <div v-if="selectedPlayer" class="player-focus" @click.self="closePlayer">
-
+            <!-- selected-card tao hieu ung animation -->
             <div class="player-card selected-card is-active" :class="{ 'is-active': selectedPlayer }">
                 <img class="player-image" :src="getImg(selectedPlayer)" alt="" aria-hidden="true" />
                 <div class="card-overlay"></div>

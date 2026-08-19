@@ -46,27 +46,22 @@
 .player-name {
   font-weight: 700;
   margin-top: 10px;
-  color: #042a20;
+  color: #052c1a;
 }
 
 /* Vị trí */
 .player-position {
   font-size: 18px;
-  opacity: 0.85;
+  opacity: 1;
   font-weight: bold;
-  background: linear-gradient(
-    to right,
-    green 0%,
-    blue 50%,
-    blue 100%);
+  color: yellow;
   /* 2. background-clip: text
-Chỉ cho gradient nằm trong vùng chữ
-
-3. text-fill-color: transparent
-Xóa màu chữ mặc định
-→ để nhìn thấy gradient bên trong chữ */
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  Chỉ cho gradient nằm trong vùng chữ
+  3. text-fill-color: transparent
+  Xóa màu chữ mặc định
+  → để nhìn thấy gradient bên trong chữ */
+  /* background-clip: text;
+  -webkit-text-fill-color: transparent; */
 }
 
 /* Tuổi */
@@ -123,7 +118,24 @@ Xóa màu chữ mặc định
       0 0 60px rgba(255, 193, 7, 0.4);
   }
 }
+@keyframes goldGlowText {
+  from {
+    text-shadow:
+      0 0 8px rgba(255, 7, 57, 0.7),
+      0 0 20px rgba(255, 7, 57, 0.5),
+      0 0 40px rgba(255, 7, 57, 0.25);
+  }
 
+  to {
+    text-shadow:
+      0 0 12px rgba(255, 7, 57, 1),
+      0 0 30px rgba(255, 7, 57,  0.8),
+      0 0 60px rgba(255, 7, 57,  0.4);
+  }
+}
+.name-animate{
+  animation: cardAppear 0.35s ease, goldGlowText 2s ease-in-out infinite alternate;
+}
 
 /* Nút đóng */
 .close-button {
