@@ -17,9 +17,11 @@ const playerPhotoPreview = ref('');
 const editPhotoFile = ref(null);
 const editPhotoPreview = ref('');
 const inputNumber = ref('');
+const searchTerm = ref('');
 
 const getPlayers = async () => {
   try {
+    // bên backend trả về 1 res.status và body gồm message và data, rồi gán res= để dùng để hiển thị frontend
     const res = await api.get('/api/players');
     players.value = res.data.data || res.data || [];
     showPlayers.value = true;
@@ -236,6 +238,35 @@ const deletePlayer = async () => {
   }
 };
 
+const searchPlayers = async () => {
+  const keyword = searchTerm.value.trim();
+
+  if (!keyword) {
+    await getPlayers();
+    return true;
+  }
+
+  try {
+    const isNumeric = /^\d+$/.test(keyword);
+    const endpoint = isNumeric
+      ? `/api/players/${encodeURIComponent(keyword)}`
+      : `/api/players/search/${encodeURIComponent(keyword)}`;
+
+    const res = await api.get(endpoint);
+    const result = res.data?.data ?? res.data ?? [];
+    players.value = Array.isArray(result) ? result : [result].filter(Boolean);
+    showPlayers.value = true;
+    return true;
+  } catch (e) {
+    const message = e?.response?.data?.message || 'Không tìm thấy cầu thủ phù hợp';
+    console.warn('searchPlayers failed', e);
+    players.value = [];
+    showPlayers.value = true;
+    alert(message);
+    return false;
+  }
+};
+
 const getImg = (player) => {
   return player?.photo || player?.avatar || defaultAvatar;
 };
@@ -256,7 +287,9 @@ export default function usePlayers() {
     editPhotoFile,
     editPhotoPreview,
     inputNumber,
+    searchTerm,
     getPlayers,
+    searchPlayers,
     selectPlayer,
     closePlayer,
     addPlayer,

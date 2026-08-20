@@ -17,7 +17,9 @@ const {
     playerPhotoPreview,
     editPhotoPreview,
     inputNumber,
+    searchTerm,
     getPlayers,
+    searchPlayers,
     selectPlayer,
     closePlayer,
     addPlayer,
@@ -75,6 +77,24 @@ const {
             <h2 class="text-center text-warning f mb-4">
                 Danh sách cầu thủ
             </h2>
+
+            <div class="mb-4 d-flex flex-column flex-md-row justify-content-center align-items-center gap-2">
+                <input
+                    v-model="searchTerm"
+                    type="text"
+                    class="form-control border border-secondary text-dark"
+                    style="max-width: 420px;"
+                    placeholder="Tìm theo tên hoặc số áo"
+                    @keyup.enter="searchPlayers"
+                />
+                <button class="btn btn-primary" @click="searchPlayers">
+                    <i class="bi bi-search"></i>
+                    Tìm kiếm
+                </button>
+                <button class="btn btn-outline-secondary" @click="searchTerm = ''; getPlayers()">
+                    Xem tất cả
+                </button>
+            </div>
 
             <div class="row g-4">
 

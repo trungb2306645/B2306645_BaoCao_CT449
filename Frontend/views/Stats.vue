@@ -5,6 +5,7 @@ import axios from 'axios';
 const top = ref([]);
 const load = async () => {
     try {
+        // GGiowis
         const r = await axios.get('http://localhost:3000/api/players/stats/top-scorers?limit=10');
         top.value = r.data.data;
     } catch (e) {
